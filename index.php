@@ -29,29 +29,25 @@ function printSchedule(int $year, int $month): void
     echo $monthName . ' ' . $year . PHP_EOL;
     echo str_repeat('-', 20) . PHP_EOL;
 
-    $workDayCounter = 1;
+    $cycleDay = 1;
 
     for ($day = 1; $day <= $daysInMonth; $day++) {
-        $dayOfWeek = date('N', mktime(0, 0, 0, $month, $day, $year));
+        $dayOfWeek = (int) date('N', mktime(0, 0, 0, $month, $day, $year));
 
-        $isWeekend = $dayOfWeek >= 6;
-
-        if ($isWeekend) {
-            echo $day . PHP_EOL;
-            continue;
-        }
-
-        if ($workDayCounter === 1) {
-            echo $day . ' +' . PHP_EOL;
-            $workDayCounter = 0;
+        if ($cycleDay === 1) {
+            if ($dayOfWeek >= 6) {
+                echo $day . " (перенос на понедельник)" . PHP_EOL;
+            } else {
+                echo $day . " +" . PHP_EOL;
+            }
         } else {
             echo $day . PHP_EOL;
         }
 
-        $workDayCounter++;
+        $cycleDay++;
 
-        if ($workDayCounter > 3) {
-            $workDayCounter = 1;
+        if ($cycleDay > 3) {
+            $cycleDay = 1;
         }
     }
 }
