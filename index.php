@@ -18,7 +18,7 @@ function getMonthName(int $month): string
         12 => 'Декабрь',
     ];
 
-    return $months[$month];
+    return $months[$month] ?? '';
 }
 
 function printSchedule(int $year, int $month): void
@@ -29,27 +29,32 @@ function printSchedule(int $year, int $month): void
     echo $monthName . ' ' . $year . PHP_EOL;
     echo str_repeat('-', 20) . PHP_EOL;
 
-    $cycleDay = 1;
+    $nonWorkingDays = 2;
+    $workingCount = 0;
+    $weekendCount = 0;
 
     for ($day = 1; $day <= $daysInMonth; $day++) {
         $dayOfWeek = (int) date('N', mktime(0, 0, 0, $month, $day, $year));
 
-        if ($cycleDay === 1) {
-            if ($dayOfWeek >= 6) {
-                echo $day . " (перенос на понедельник)" . PHP_EOL;
-            } else {
-                echo $day . " +" . PHP_EOL;
-            }
-        } else {
-            echo $day . PHP_EOL;
+        if ($dayOfWeek >= 6) {
+            echo $day . ' - выходной' . PHP_EOL;
+            $nonWorkingDays++;
+            $weekendCount++;
+            continue;
         }
 
-        $cycleDay++;
-
-        if ($cycleDay > 3) {
-            $cycleDay = 1;
+        if ($nonWorkingDays <= 2) {
+            echo $day . ' - выходной' . PHP_EOL;
+            $nonWorkingDays++;
+            $weekendCount++;
+        } else {
+            echo $day . ' - рабочий' . PHP_EOL;
+            $nonWorkingDays = 0;
+            $workingCount++;
         }
     }
+    echo 'Рабочих дней: ' . $workingCount . PHP_EOL;
+    echo 'Выходных дней: ' . $weekendCount . PHP_EOL;
 }
 
-printSchedule(2026, 5);
+printSchedule(2025, 2);
